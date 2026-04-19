@@ -221,6 +221,49 @@ The image pixel trick is old, but still useful to understand. Because it is just
 
 ---
 
+## Release Process
+
+Use this when you want to publish a new version of the lab.
+
+1. Make your changes.
+2. Run the stack locally:
+
+```bash
+docker compose up --build
+```
+
+3. Check the main flow:
+
+- Open http://localhost:8080
+- Click through the demo pages
+- Confirm events show up at http://localhost:8080/events.html
+- Confirm Metabase opens at http://localhost:3000
+
+4. Make sure local secrets are not staged:
+
+```bash
+git status --short --ignored
+```
+
+`.env`, `.env.local`, `.DS_Store`, and cache files should stay ignored.
+
+5. Commit and push:
+
+```bash
+git add .
+git commit -m "Describe the change"
+git push origin main
+```
+
+6. Optional: create a Git tag for a named release:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+---
+
 ## Project Structure
 
 ```
