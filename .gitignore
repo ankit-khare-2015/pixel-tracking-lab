@@ -1,0 +1,29 @@
+# secrets — never commit these
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+
+# local runtime data
+*.log
+*.sqlite
+*.db
+*.aiff
+
+# generated video artifacts
+video_frames/
+video_audio/
+river_audio/
+story_audio/
+story_frames/
+vf2/
+va2/
+*.mp4
+pixel_tracking_lab_demo.mp4
+pixel_tracking_lab_demo_voiced.mp4
+
+# python
+__pycache__/
+*.pyc

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Tracking Lab - Signup</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/pixel.js"></script>
+    <script src="/js/app.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <a href="/index.html">Home</a>
+        <a href="/product.html">Product</a>
+        <a href="/signup.html">Signup</a>
+        <a href="/checkout.html">Checkout</a>
+        <a href="/events.html">Events</a>
+        <a href="/reports.html">Reports</a>
+      </nav>
+
+      <div class="card">
+        <h1>Signup Page</h1>
+        <p>Simulate the signup funnel stage.</p>
+        <div class="button-row">
+          <button id="signupStartBtn" data-track-event="signup_started">Start Signup</button>
+          <button id="signupCompleteBtn" data-track-event="signup_completed">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Tracking Lab - Home</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/pixel.js"></script>
+    <script src="/js/app.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <a href="/index.html">Home</a>
+        <a href="/product.html">Product</a>
+        <a href="/signup.html">Signup</a>
+        <a href="/checkout.html">Checkout</a>
+        <a href="/events.html">Events</a>
+        <a href="/reports.html">Reports</a>
+      </nav>
+
+      <div class="card">
+        <h1>Pixel Tracking Lab</h1>
+        <p>
+          This local demo captures browser events and sends them to FastAPI.
+          Add UTM params to URL like
+          <code>?utm_source=newsletter&utm_medium=email&utm_campaign=spring</code>.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Quick actions</h2>
+        <div class="button-row">
+          <button id="homeProductView" data-track-event="product_view">Track Product View</button>
+          <button id="homeImagePixel" data-track-event="home_image_ping" data-source="image">Track via Image Pixel</button>
+        </div>
+        <p class="small">The second button triggers <code>GET /pixel</code> using an image beacon.</p>
+      </div>
+    </div>
+  </body>
+</html>

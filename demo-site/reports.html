@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Tracking Lab - Reports</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/pixel.js"></script>
+    <style>
+      .ready-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #6ee7b7;
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 16px;
+      }
+      .ready-badge::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+      }
+      .creds-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .cred-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+      .cred-item strong {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 3px;
+      }
+      .cred-item span {
+        font-family: monospace;
+        color: #0f172a;
+        font-size: 14px;
+      }
+      .dashboard-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 14px;
+      }
+      .dash-card {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        padding: 14px 16px;
+        font-size: 14px;
+        color: #166534;
+      }
+      .dash-card .dash-icon { font-size: 20px; margin-bottom: 6px; }
+      .dash-card .dash-title { font-weight: 600; margin-bottom: 2px; }
+      .dash-card .dash-desc  { font-size: 12px; color: #4ade80; color: #15803d; }
+      .launch-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--primary);
+        color: #fff;
+        text-decoration: none;
+        padding: 14px 32px;
+        border-radius: 10px;
+        font-size: 17px;
+        font-weight: 700;
+        margin-top: 8px;
+        transition: background 0.15s;
+      }
+      .launch-btn:hover { background: var(--primary-dark); }
+      .launch-btn svg { width: 20px; height: 20px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <a href="/index.html">Home</a>
+        <a href="/product.html">Product</a>
+        <a href="/signup.html">Signup</a>
+        <a href="/checkout.html">Checkout</a>
+        <a href="/events.html">Events</a>
+        <a href="/reports.html">Reports</a>
+      </nav>
+
+      <div class="card hero-card">
+        <div class="ready-badge">Metabase configured &amp; ready</div>
+        <h1>Analytics Dashboard</h1>
+        <p>
+          Metabase is pre-configured and connected to PostgreSQL automatically on first boot.
+          No setup wizard. No manual database connection. Just click Launch.
+        </p>
+        <a class="launch-btn" href="http://localhost:3000" target="_blank" rel="noreferrer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          Launch Metabase
+        </a>
+      </div>
+
+      <div class="card">
+        <h2>Login Credentials</h2>
+        <p>Use these to sign in on first visit — already configured by the setup container.</p>
+        <div class="creds-grid">
+          <div class="cred-item"><strong>Email</strong><span>admin@pixellab.local</span></div>
+          <div class="cred-item"><strong>Password</strong><span>PixelLab2024!</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Pre-Built Dashboard</h2>
+        <p>Four questions are auto-created and pinned to the <strong>Pixel Tracking Lab</strong> dashboard.</p>
+        <div class="dashboard-cards">
+          <div class="dash-card">
+            <div class="dash-icon">📊</div>
+            <div class="dash-title">Events by Name</div>
+            <div class="dash-desc">Horizontal bar — top events ranked by volume</div>
+          </div>
+          <div class="dash-card">
+            <div class="dash-icon">📈</div>
+            <div class="dash-title">Events Over Time</div>
+            <div class="dash-desc">Daily line chart of all tracking activity</div>
+          </div>
+          <div class="dash-card">
+            <div class="dash-icon">🥧</div>
+            <div class="dash-title">JS Pixel vs Image Pixel</div>
+            <div class="dash-desc">Pie chart — source_type breakdown</div>
+          </div>
+          <div class="dash-card">
+            <div class="dash-icon">🎯</div>
+            <div class="dash-title">Events by UTM Source</div>
+            <div class="dash-desc">Bar chart — campaign attribution by source</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Direct Links</h2>
+        <div class="button-row">
+          <a class="button-link" href="http://localhost:3000/collection/root" target="_blank" rel="noreferrer">Browse Questions</a>
+          <a class="button-link" href="http://localhost:3000/browse/databases" target="_blank" rel="noreferrer">Browse Database</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Tracking Lab - Events</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/pixel.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <a href="/index.html">Home</a>
+        <a href="/product.html">Product</a>
+        <a href="/signup.html">Signup</a>
+        <a href="/checkout.html">Checkout</a>
+        <a href="/events.html">Events</a>
+        <a href="/reports.html">Reports</a>
+      </nav>
+
+      <div class="card">
+        <h1>Recent Events</h1>
+        <p>Fetches the latest events from <code>GET /events</code>.</p>
+        <div class="button-row">
+          <button id="refreshBtn">Refresh</button>
+        </div>
+      </div>
+
+      <div class="card table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Event</th>
+              <th>Source</th>
+              <th>Session</th>
+              <th>Page</th>
+            </tr>
+          </thead>
+          <tbody id="eventsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      async function loadEvents() {
+        const tbody = document.getElementById("eventsBody");
+        tbody.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";
+        try {
+          const res = await fetch("http://localhost:8000/events?limit=50");
+          const events = await res.json();
+          if (!Array.isArray(events) || events.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='5'>No events found.</td></tr>";
+            return;
+          }
+
+          tbody.innerHTML = events
+            .map(
+              (e) =>
+                `<tr>
+                <td>${new Date(e.event_time).toLocaleString()}</td>
+                <td>${e.event_name}</td>
+                <td>${e.source_type}</td>
+                <td>${e.session_id || "-"}</td>
+                <td>${e.page_url || "-"}</td>
+              </tr>`
+            )
+            .join("");
+        } catch (err) {
+          tbody.innerHTML = `<tr><td colspan='5'>Failed to load events: ${err}</td></tr>`;
+        }
+      }
+
+      document.getElementById("refreshBtn").addEventListener("click", loadEvents);
+      loadEvents();
+    </script>
+  </body>
+</html>

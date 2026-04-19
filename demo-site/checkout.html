@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Tracking Lab - Checkout</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/pixel.js"></script>
+    <script src="/js/app.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <a href="/index.html">Home</a>
+        <a href="/product.html">Product</a>
+        <a href="/signup.html">Signup</a>
+        <a href="/checkout.html">Checkout</a>
+        <a href="/events.html">Events</a>
+        <a href="/reports.html">Reports</a>
+      </nav>
+
+      <div class="card">
+        <h1>Checkout Page</h1>
+        <p>Final step in the funnel. Click purchase to emit conversion event.</p>
+        <div class="button-row">
+          <button id="purchaseBtn" data-track-event="purchase">Purchase</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

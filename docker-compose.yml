@@ -1,0 +1,85 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pixel-lab-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-pixel_lab}
+      POSTGRES_USER: ${POSTGRES_USER:-pixel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pixel}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pixel} -d ${POSTGRES_DB:-pixel_lab}"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+
+  backend:
+    build:
+      context: ./backend
+    container_name: pixel-lab-backend
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg2://pixel:pixel@postgres:5432/pixel_lab}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8080}
+      DB_CONNECT_RETRIES: 30
+      DB_RETRY_SLEEP_SECONDS: 2
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+
+  demo-site:
+    build:
+      context: ./demo-site
+    container_name: pixel-lab-demo-site
+    depends_on:
+      - backend
+    ports:
+      - "${DEMO_SITE_PORT:-8080}:80"
+
+  metabase:
+    image: metabase/metabase:v0.52.10
+    container_name: pixel-lab-metabase
+    environment:
+      MB_ENABLE_EMBEDDING: "true"
+      MB_SITE_URL: ${MB_SITE_URL:-http://localhost:3000}
+      JAVA_OPTS: "-Xmx512m"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${METABASE_PORT:-3000}:3000"
+    volumes:
+      - metabase_data:/metabase-data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:3000/api/health | grep -q 'ok'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
+
+  metabase-setup:
+    build:
+      context: ./metabase-setup
+    container_name: pixel-lab-metabase-setup
+    environment:
+      MB_URL: http://metabase:3000
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-pixel_lab}
+      POSTGRES_USER: ${POSTGRES_USER:-pixel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pixel}
+      MB_ADMIN_EMAIL: ${MB_ADMIN_EMAIL:-admin@pixellab.local}
+      MB_ADMIN_PASSWORD: ${MB_ADMIN_PASSWORD:-PixelLab2024!}
+    depends_on:
+      metabase:
+        condition: service_healthy
+    restart: "no"
+
+volumes:
+  postgres_data:
+  metabase_data:
