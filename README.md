@@ -1,31 +1,30 @@
 # Pixel Tracking Lab
 
-> A hands-on, fully Dockerized lab to learn how **browser pixel tracking** and **product analytics pipelines** work end-to-end — the same way companies like Segment, Mixpanel, and Google Analytics work under the hood.
+> A small Dockerized lab for understanding how browser tracking, event collection, and analytics dashboards work end to end.
 
 ---
 
-## What Is This Project?
+## Why This Exists
 
-Every time you visit a website and see "We track your activity to improve our service," there is an invisible tracking pixel or JavaScript beacon firing in the background. This project builds that entire system from scratch — so you can **see, understand, and extend it**.
+Most analytics tools hide the interesting parts. You add a script tag, open a dashboard, and the system feels like magic.
 
-This is not a tutorial you follow passively. You run a real 4-service stack, fire real events from real web pages, and watch them land in a real database — then visualize them in Metabase.
+This project makes those parts visible.
 
-**Built for:** developers, data engineers, growth engineers, and anyone curious about how analytics infrastructure actually works.
+You run a demo website, click through a small e-commerce funnel, send real tracking events, store them in Postgres, and inspect them in Metabase. It is meant to be cloned, run, broken, queried, and extended.
+
+Built for developers, data engineers, growth engineers, and anyone curious about what happens after a user clicks a button.
 
 ---
 
-## Architecture Overview
+## Architecture
 
-```
-Browser (Demo Site)
-  │
-  ├── POST /track  ──► FastAPI Backend ──► PostgreSQL ──► Metabase
-  │   (JSON beacon)
-  └── GET /pixel   ──► FastAPI Backend ──► PostgreSQL
-      (1×1 GIF beacon)
-```
+<p align="center">
+  <img src="docs/assets/architecture.png" alt="Pixel Tracking Lab architecture diagram" width="100%">
+</p>
 
-### The 4 Services (all via Docker Compose)
+
+
+### Services
 
 | Service       | URL                        | What It Does                             |
 |---------------|----------------------------|------------------------------------------|
@@ -36,7 +35,7 @@ Browser (Demo Site)
 
 ---
 
-## Tech Stack
+## Stack
 
 | Layer       | Technology                                |
 |-------------|-------------------------------------------|
@@ -48,10 +47,11 @@ Browser (Demo Site)
 
 ---
 
-## What Was Built
+## What Is Inside
 
 ### Demo Site (`demo-site/`)
-Five pages that simulate a real e-commerce funnel:
+Small HTML pages that simulate a simple funnel:
+
 - `index.html` — Home page
 - `product.html` — Product detail page
 - `signup.html` — User registration page
@@ -60,23 +60,28 @@ Five pages that simulate a real e-commerce funnel:
 - `reports.html` — Links to Metabase dashboards
 
 ### JavaScript Tracking Library (`demo-site/js/pixel.js`)
-`window.myPixel` — a lightweight tracking client that:
+`window.myPixel` is a lightweight tracking client. It:
+
 - Fires `page_view` automatically on every page load
-- Exposes `window.myPixel.track(eventName, payload)` for custom events
-- Persists `anonymous_user_id` and `session_id` in `localStorage`
-- Captures UTM parameters from the URL (source, medium, campaign, term, content)
-- Enriches every event with browser metadata: user agent, language, screen size, referrer, timestamp
-- Supports **two transport methods**: JSON POST and image pixel GET
+- Sends custom events with `window.myPixel.track(eventName, payload)`
+- Stores `anonymous_user_id` and `session_id` in `localStorage`
+- Captures UTM parameters from the URL
+- Adds browser metadata like referrer, language, screen size, and user agent
+- Supports both JSON POST and image pixel GET tracking
 
 ### FastAPI Backend (`backend/`)
-Four endpoints:
+The backend receives and stores events:
+
 - `GET /health` — liveness check
-- `POST /track` — receives JSON events from JS beacon
-- `GET /pixel` — receives events via URL params, returns a transparent 1×1 GIF
-- `GET /events?limit=100` — returns recent events for the live feed page
+- `POST /track` — JSON event tracking
+- `GET /pixel` — image pixel tracking, returns a transparent 1x1 GIF
+- `GET /events?limit=100` — recent events for the live feed
 
 ### PostgreSQL Schema (`sql/init.sql`)
-One table — `tracking_events` — with:
+Events are stored in one table: `tracking_events`.
+
+It includes:
+
 - `event_id` (UUID, primary key)
 - `event_name`, `event_time`, `page_url`, `referrer`
 - `session_id`, `anonymous_user_id`
@@ -92,7 +97,6 @@ One table — `tracking_events` — with:
 
 ### Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) running on your machine
-- That's it.
 
 ### Run
 
@@ -103,7 +107,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Wait ~30 seconds for all services to initialize, then open:
+Wait about 30 seconds, then open:
 
 | What               | URL                               |
 |--------------------|-----------------------------------|
@@ -126,20 +130,20 @@ docker compose down -v
 
 ---
 
-## Testing the System
+## Try It
 
-### Scenario 1 — Basic Event Flow
+### Basic Event Flow
 
 1. Open http://localhost:8080
 2. Navigate: Home → Product → Signup → Checkout
 3. Click the action buttons on each page
 4. Open http://localhost:8080/events.html
 
-**Expect:** `page_view` events auto-fired per page load, plus custom events per button click.
+You should see automatic `page_view` events and custom button-click events.
 
 ---
 
-### Scenario 2 — UTM Campaign Attribution
+### UTM Attribution
 
 Open the site with UTM parameters:
 
@@ -153,19 +157,19 @@ Fire a few events, then check:
 curl "http://localhost:8000/events?limit=5"
 ```
 
-**Expect:** Events carry `utm_source`, `utm_medium`, `utm_campaign` in the response.
+The events should include `utm_source`, `utm_medium`, and `utm_campaign`.
 
 ---
 
-### Scenario 3 — Image Pixel Tracking
+### Image Pixel Tracking
 
 Click the button that uses the image pixel transport on the Home page.
 
-**Expect:** An event stored with `source_type = image_pixel` — the same data, different delivery mechanism.
+You should see an event with `source_type = image_pixel`.
 
 ---
 
-### Scenario 4 — API & Database Inspection
+### API And Database Inspection
 
 ```bash
 # Health check
@@ -181,7 +185,7 @@ docker compose exec postgres psql -U pixel -d pixel_lab \
 
 ---
 
-### Scenario 5 — Metabase Dashboards
+### Metabase Dashboards
 
 1. Open http://localhost:3000
 2. Connect to PostgreSQL with:
@@ -195,23 +199,25 @@ docker compose exec postgres psql -U pixel -d pixel_lab \
 
 ---
 
-## How Pixel Tracking Works (Concept)
+## Pixel Tracking In Plain English
 
-### JavaScript Beacon (Modern)
+There are two common ways to send tracking events.
+
+### JavaScript Beacon
 ```javascript
 window.myPixel.track("add_to_cart", { product_id: "SKU-42", price: 49.99 });
 // → POST /track with JSON body
 // → Stored as source_type = js_pixel
 ```
 
-### Image Pixel Beacon (Classic / Ad-Tech)
+### Image Pixel Beacon
 ```html
 <img src="http://localhost:8000/pixel?event=add_to_cart&product_id=SKU-42" width="1" height="1" />
 // → GET /pixel → returns transparent 1×1 GIF
 // → Stored as source_type = image_pixel
 ```
 
-The image pixel trick works even in environments where JavaScript is blocked — historically used in email open tracking and display advertising.
+The image pixel trick is old, but still useful to understand. Because it is just an image request, it can work in places where JavaScript does not, such as many email clients.
 
 ---
 
@@ -263,19 +269,6 @@ pixel-tracking-lab/
 
 ---
 
-## Done Criteria (All Achieved)
-
-- [x] Docker Compose starts all 4 services cleanly
-- [x] Demo pages fire automatic `page_view` events on load
-- [x] Button clicks generate custom events via JS beacon
-- [x] Image pixel endpoint returns valid 1×1 GIF and stores events
-- [x] PostgreSQL contains tracking rows with full metadata
-- [x] UTM parameters are captured and stored correctly
-- [x] Metabase can connect and query tracking data
-- [x] Live events feed page shows real-time data
-
----
-
 ## Author
 
-Built to understand the internals of analytics infrastructure — no third-party SDKs, no magic, just the real thing.
+Built to make analytics infrastructure easier to see and reason about.
